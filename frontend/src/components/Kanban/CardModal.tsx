@@ -1,0 +1,2 @@
+// Card modal placeholder
+export {};

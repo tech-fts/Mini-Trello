@@ -1,0 +1,2 @@
+// Kanban card placeholder
+export {};

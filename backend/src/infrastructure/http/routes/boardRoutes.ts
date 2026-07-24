@@ -1,0 +1,2 @@
+// Board route placeholder
+export {};

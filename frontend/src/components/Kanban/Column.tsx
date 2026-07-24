@@ -1,0 +1,2 @@
+// Kanban column placeholder
+export {};

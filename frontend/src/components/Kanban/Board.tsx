@@ -1,0 +1,2 @@
+// Kanban board placeholder
+export {};

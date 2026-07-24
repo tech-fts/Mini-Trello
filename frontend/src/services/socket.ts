@@ -1,0 +1,2 @@
+// Socket service placeholder
+export {};

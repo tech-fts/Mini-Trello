@@ -1,0 +1,10 @@
+{
+  "name": "mini-trello-backend",
+  "version": "1.0.0",
+  "main": "dist/app/server.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/app/server.js",
+    "dev": "ts-node-dev --respawn src/app/server.ts"
+  }
+}

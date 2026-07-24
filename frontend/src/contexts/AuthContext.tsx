@@ -1,0 +1,2 @@
+// Auth context placeholder
+export {};

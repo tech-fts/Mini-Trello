@@ -1,0 +1,2 @@
+// Card entity placeholder
+export {};

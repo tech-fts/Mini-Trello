@@ -1,0 +1,2 @@
+// Card route placeholder
+export {};

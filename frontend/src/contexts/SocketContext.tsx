@@ -1,0 +1,2 @@
+// Socket context placeholder
+export {};

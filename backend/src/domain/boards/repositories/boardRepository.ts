@@ -1,0 +1,2 @@
+// Board repository placeholder
+export {};

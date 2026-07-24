@@ -1,0 +1,2 @@
+// User avatar placeholder
+export {};

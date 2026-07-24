@@ -1,0 +1,2 @@
+// Board entity placeholder
+export {};

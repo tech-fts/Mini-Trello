@@ -1,0 +1,2 @@
+// Auth route placeholder
+export {};

@@ -1,0 +1,2 @@
+// Route composition placeholder
+export {};
