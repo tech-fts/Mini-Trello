@@ -6,5 +6,19 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/app/server.js",
     "dev": "ts-node-dev --respawn src/app/server.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
+    "pg": "^8.22.0",
+    "prisma": "^5.22.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.19",
+    "@types/node": "^20.14.3",
+    "@types/pg": "^8.20.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.5.4"
   }
 }
