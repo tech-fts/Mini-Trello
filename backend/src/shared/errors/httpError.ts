@@ -1,2 +1,0 @@
-// Shared error placeholder
-export {};

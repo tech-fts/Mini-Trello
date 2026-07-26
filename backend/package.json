@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/app/server.js",
-    "dev": "ts-node-dev --respawn src/app/server.ts"
+    "dev": "ts-node-dev --respawn src/app/server.ts",
+    "test": "npx ts-node tests/*.test.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

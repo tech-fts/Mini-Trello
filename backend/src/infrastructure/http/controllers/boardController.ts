@@ -6,6 +6,7 @@ import { getBoards } from "../../../domain/boards/use-cases/getBoards";
 import { updateBoard } from "../../../domain/boards/use-cases/updateBoard";
 import { BoardRepository } from "../../../domain/boards/repositories/boardRepository";
 import { CreateBoardInput, UpdateBoardInput } from "../../../domain/boards/entities/board";
+import { sanitizeId, sendError } from "../../../shared/utils/http";
 
 export function createBoardController(boardRepository: BoardRepository) {
   return {
@@ -127,15 +128,3 @@ function parseUpdateBoardInput(body: unknown): UpdateBoardInput {
   return { title, description };
 }
 
-function sanitizeId(id: string): string {
-  return id.replace(/[^a-zA-Z0-9-_]/g, "").slice(0, 100);
-}
-
-function sendError(res: Response, error: unknown): void {
-  if (error instanceof Error) {
-    res.status(400).json({ error: error.message });
-    return;
-  }
-
-  res.status(500).json({ error: "Unexpected error" });
-}
