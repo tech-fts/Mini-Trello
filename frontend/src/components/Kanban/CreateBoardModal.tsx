@@ -1,39 +1,58 @@
 import { useState } from "react";
 import { Modal } from "../Common/Modal";
+import { FormField } from "../Common/FormField";
 
 interface CreateBoardModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (title: string) => Promise<unknown>;
+  onCreate: (title: string, description?: string) => Promise<unknown>;
 }
 
-export function CreateBoardModal({ isOpen, onClose, onCreate }: CreateBoardModalProps) {
+export function CreateBoardModal({
+  isOpen,
+  onClose,
+  onCreate,
+}: CreateBoardModalProps) {
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
   const handleCreate = async () => {
     if (title.trim()) {
-      await onCreate(title);
+      await onCreate(title, description || undefined);
       setTitle("");
+      setDescription("");
       onClose();
     }
   };
 
   const handleClose = () => {
     setTitle("");
+    setDescription("");
     onClose();
   };
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Create New Board">
-      <input
-        type="text"
-        placeholder="Board title"
+      <FormField
+        label="Title"
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        onChange={setTitle}
+        placeholder="Board title"
       />
-      <div className="modal-footer" style={{ marginTop: 16 }}>
-        <button onClick={handleCreate}>Create</button>
-        <button onClick={handleClose}>Cancel</button>
+      <FormField
+        label="Description"
+        value={description}
+        onChange={setDescription}
+        placeholder="Optional description"
+        multiline
+      />
+      <div className="modal-footer">
+        <button className="btn-primary" onClick={handleCreate}>
+          Create
+        </button>
+        <button className="btn-secondary" onClick={handleClose}>
+          Cancel
+        </button>
       </div>
     </Modal>
   );

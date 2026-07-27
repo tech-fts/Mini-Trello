@@ -1,32 +1,53 @@
-import { useState } from "react";
-import { AuthProvider } from "../contexts/AuthContext";
+import { useState, useCallback } from "react";
+import { AuthProvider, useAuth } from "../contexts/AuthContext";
 import { SocketProvider } from "../contexts/SocketContext";
+import { Header } from "../components/Common/Header";
+import { Board } from "../components/Kanban/Board";
+import { LoginPage } from "../components/Auth/LoginPage";
+import { RegisterPage } from "../components/Auth/RegisterPage";
 import "../assets/styles.css";
 
-// Placeholder components
-const LoginPage = () => (
-  <div className="auth-container">
-    <h1>Mini Trello - Login</h1>
-    <p>Login implementation goes here...</p>
-  </div>
-);
+type AuthView = "login" | "register";
 
-const KanbanBoard = () => (
-  <div className="kanban-container">
-    <h1>Kanban Board</h1>
-    <p>Kanban board implementation goes here...</p>
-  </div>
-);
+function AuthShell() {
+  const [view, setView] = useState<AuthView>("login");
+
+  const switchToRegister = useCallback(() => setView("register"), []);
+  const switchToLogin = useCallback(() => setView("login"), []);
+
+  return view === "login" ? (
+    <LoginPage onSwitchToRegister={switchToRegister} />
+  ) : (
+    <RegisterPage onSwitchToLogin={switchToLogin} />
+  );
+}
+
+function KanbanShell() {
+  return (
+    <div className="app-layout">
+      <Header />
+      <main className="main-content">
+        <Board />
+      </main>
+    </div>
+  );
+}
+
+function AppContent() {
+  const { user } = useAuth();
+
+  if (!user) {
+    return <AuthShell />;
+  }
+
+  return <KanbanShell />;
+}
 
 export function App() {
-  const [isAuthenticated] = useState(false);
-
   return (
     <AuthProvider>
       <SocketProvider>
-        <div className="app">
-          {isAuthenticated ? <KanbanBoard /> : <LoginPage />}
-        </div>
+        <AppContent />
       </SocketProvider>
     </AuthProvider>
   );
