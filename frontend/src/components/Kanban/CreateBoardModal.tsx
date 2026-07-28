@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Modal } from "../Common/Modal";
 import { FormField } from "../Common/FormField";
+import { ModalFooter } from "../Common/ModalFooter";
 
 interface CreateBoardModalProps {
   isOpen: boolean;
@@ -46,14 +47,12 @@ export function CreateBoardModal({
         placeholder="Optional description"
         multiline
       />
-      <div className="modal-footer">
-        <button className="btn-primary" onClick={handleCreate}>
-          Create
-        </button>
-        <button className="btn-secondary" onClick={handleClose}>
-          Cancel
-        </button>
-      </div>
+      <ModalFooter
+        primaryLabel="Create"
+        onPrimary={handleCreate}
+        onCancel={handleClose}
+        primaryDisabled={!title.trim()}
+      />
     </Modal>
   );
 }

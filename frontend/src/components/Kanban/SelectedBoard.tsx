@@ -1,5 +1,5 @@
 import { Board as BoardType } from "../../types/index";
-import Column from "./Column";
+import Column, { COLUMNS } from "./Column";
 
 interface SelectedBoardProps {
   board: BoardType;
@@ -10,9 +10,9 @@ export function SelectedBoard({ board }: SelectedBoardProps) {
     <div className="selected-board">
       <h2>{board.title}</h2>
       <div className="columns-container">
-        <Column columnId="todo" title="To Do" />
-        <Column columnId="in-progress" title="In Progress" />
-        <Column columnId="done" title="Done" />
+        {COLUMNS.map((col) => (
+          <Column key={col.id} columnId={col.id} title={col.title} />
+        ))}
       </div>
     </div>
   );

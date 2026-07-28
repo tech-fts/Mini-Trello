@@ -1,11 +1,18 @@
+import http from "http";
 import express, { Express } from "express";
+import cors from "cors";
 import { registerRoutes } from "./routes";
 import { handleError, handleNotFound } from "./middlewares";
+import { createSocketServer } from "../infrastructure/websocket/socketServer";
 
 export function createApp(): Express {
   const app = express();
 
   app.disable("x-powered-by");
+
+  // Permit cross-origin requests from the Vite dev server (port 5000 / 5173)
+  // and any other frontend origin. Restrict in production via allowOrigin option.
+  app.use(cors({ origin: true, credentials: true }));
   app.use(express.json({ limit: "1mb" }));
   app.use((req, res, next) => {
     res.setHeader("X-Content-Type-Options", "nosniff");
@@ -23,6 +30,10 @@ export function createApp(): Express {
 const port = Number(process.env.PORT) || 4000;
 const app = createApp();
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+// Socket.IO needs the raw http.Server for WebSocket upgrade handling.
+const httpServer = http.createServer(app);
+createSocketServer(httpServer);
+
+httpServer.listen(port, () => {
+  console.log(`Server running on port ${port} (HTTP + WebSocket)`);
 });

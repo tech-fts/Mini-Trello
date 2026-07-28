@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { useKanban } from "../../hooks/useKanban";
-import Card from "./Card";
-import { Card as CardType } from "../../types/index";
+import CardComponent from "./Card";
 
 interface ColumnProps {
   columnId: string;
   title: string;
 }
+
+/** Default column definitions — can be moved to config/constants later (OCP). */
+export const COLUMNS = [
+  { id: "todo", title: "To Do" },
+  { id: "in-progress", title: "In Progress" },
+  { id: "done", title: "Done" },
+] as const;
 
 export function Column({ columnId, title }: ColumnProps) {
   const { cards, selectedBoard, moveCard } = useKanban();
@@ -16,7 +22,10 @@ export function Column({ columnId, title }: ColumnProps) {
     ? (cards[selectedBoard.id] || []).filter((c) => c.columnId === columnId)
     : [];
 
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, cardId: string) => {
+  const handleDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    cardId: string,
+  ) => {
     setDraggedCardId(cardId);
     e.dataTransfer.effectAllowed = "move";
   };
@@ -31,35 +40,25 @@ export function Column({ columnId, title }: ColumnProps) {
     if (draggedCardId) {
       try {
         await moveCard(draggedCardId, columnCards.length, columnId);
-      } catch (error) {
-        console.error("Failed to move card:", error);
+      } catch (err) {
+        console.error("Failed to move card:", err);
       }
       setDraggedCardId(null);
     }
   };
 
-  const handleCardClick = (card: CardType) => {
-    console.log("Card clicked:", card);
-    // Open card modal/details here
-  };
-
   return (
-    <div
-      className="column"
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
-    >
+    <div className="column" onDragOver={handleDragOver} onDrop={handleDrop}>
       <div className="column-header">
         <h3>{title}</h3>
         <span className="card-count">{columnCards.length}</span>
       </div>
       <div className="cards-list">
         {columnCards.map((card) => (
-          <Card
+          <CardComponent
             key={card.id}
             card={card}
             onDragStart={handleDragStart}
-            onClick={handleCardClick}
           />
         ))}
       </div>

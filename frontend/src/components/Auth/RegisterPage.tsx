@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import { AuthFormLayout } from "../Common/AuthFormLayout";
 import { FormField } from "../Common/FormField";
 
 interface RegisterPageProps {
@@ -35,57 +36,39 @@ export function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
     onSwitchToLogin();
   };
 
-  const displayError = localError || error;
-
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h1>Mini Trello</h1>
-        <h2>Register</h2>
-
-        {displayError && (
-          <div className="alert alert-error">{displayError}</div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <FormField
-            label="Email"
-            value={email}
-            onChange={setEmail}
-            type="email"
-            placeholder="your@email.com"
-          />
-          <FormField
-            label="Password"
-            value={password}
-            onChange={setPassword}
-            type="password"
-            placeholder="Min 6 characters"
-          />
-          <FormField
-            label="Confirm Password"
-            value={confirmPassword}
-            onChange={setConfirmPassword}
-            type="password"
-            placeholder="Re-enter password"
-          />
-
-          <button
-            type="submit"
-            className="btn-primary btn-block"
-            disabled={isLoading}
-          >
-            {isLoading ? "Creating account..." : "Register"}
-          </button>
-        </form>
-
-        <p className="auth-switch">
-          Already have an account?{" "}
-          <button className="btn-link" onClick={handleSwitch}>
-            Login
-          </button>
-        </p>
-      </div>
-    </div>
+    <AuthFormLayout
+      title="Register"
+      error={localError || error}
+      isLoading={isLoading}
+      submitLabel="Register"
+      loadingLabel="Creating account..."
+      onSubmit={handleSubmit}
+      switchText="Already have an account?"
+      switchLinkLabel="Login"
+      onSwitch={handleSwitch}
+    >
+      <FormField
+        label="Email"
+        value={email}
+        onChange={setEmail}
+        type="email"
+        placeholder="your@email.com"
+      />
+      <FormField
+        label="Password"
+        value={password}
+        onChange={setPassword}
+        type="password"
+        placeholder="Min 6 characters"
+      />
+      <FormField
+        label="Confirm Password"
+        value={confirmPassword}
+        onChange={setConfirmPassword}
+        type="password"
+        placeholder="Re-enter password"
+      />
+    </AuthFormLayout>
   );
 }

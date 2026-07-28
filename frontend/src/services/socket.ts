@@ -1,7 +1,10 @@
 import { io, Socket } from "socket.io-client";
 import type { Board, Card } from "../types/index";
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:4000";
+// Empty string = same origin (browser connects to Vite dev server,
+// which proxies /socket.io to the backend via vite.config.ts).
+// Set VITE_SOCKET_URL in production to the backend origin.
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "";
 
 // ---- Event type definitions (backend → frontend) ----
 export interface ServerToClientEvents {

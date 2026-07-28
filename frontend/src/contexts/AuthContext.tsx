@@ -1,7 +1,31 @@
 import React, { createContext, useState, useCallback, ReactNode } from "react";
-import { User, LoginPayload, RegisterPayload } from "../types/index";
+import type { User, LoginPayload, RegisterPayload, AuthResponse } from "../types/index";
 import { loginUser, registerUser } from "../services/api";
+import type { ApiResponse } from "../types/index";
 
+// ---- Token persistence (SRP: storage concern separated from auth logic) ----
+const TOKEN_KEY = "authToken";
+
+const tokenStorage = {
+  get(): string | null {
+    return localStorage.getItem(TOKEN_KEY);
+  },
+  set(token: string): void {
+    localStorage.setItem(TOKEN_KEY, token);
+  },
+  remove(): void {
+    localStorage.removeItem(TOKEN_KEY);
+  },
+};
+
+// ---- State shape (single object — consistent with useBoards/useCards/asyncAction) ----
+interface AuthState {
+  user: User | null;
+  isLoading: boolean;
+  error: string | null;
+}
+
+// ---- Public context interface ----
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
@@ -12,76 +36,74 @@ interface AuthContextType {
   clearError: () => void;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
-);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<AuthState>({
+    user: null,
+    isLoading: false,
+    error: null,
+  });
 
-  const login = useCallback(async (payload: LoginPayload) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await loginUser(payload);
-      if (response.data?.user) {
-        setUser(response.data.user);
-        // Store token if provided
-        if (response.data.token) {
-          localStorage.setItem("authToken", response.data.token);
+  /**
+   * DRY: single authenticate method shared by login and register.
+   * The only difference is which API function is called and the failure message.
+   */
+  const authenticate = useCallback(
+    async (
+      action: () => Promise<ApiResponse<AuthResponse>>,
+      failureMessage: string,
+    ) => {
+      setState((prev) => ({ ...prev, isLoading: true, error: null }));
+      try {
+        const response = await action();
+        if (response.data?.user) {
+          setState((prev) => ({ ...prev, user: response.data!.user }));
+          if (response.data.token) {
+            tokenStorage.set(response.data.token);
+          }
+        } else {
+          throw new Error(failureMessage);
         }
-      } else {
-        throw new Error("Login failed");
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : failureMessage;
+        setState((prev) => ({ ...prev, error: message }));
+        throw err;
+      } finally {
+        setState((prev) => ({ ...prev, isLoading: false }));
       }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Login failed";
-      setError(message);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    [],
+  );
 
-  const register = useCallback(async (payload: RegisterPayload) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await registerUser(payload);
-      if (response.data?.user) {
-        setUser(response.data.user);
-        // Store token if provided
-        if (response.data.token) {
-          localStorage.setItem("authToken", response.data.token);
-        }
-      } else {
-        throw new Error("Registration failed");
-      }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Registration failed";
-      setError(message);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const login = useCallback(
+    (payload: LoginPayload) =>
+      authenticate(() => loginUser(payload), "Login failed"),
+    [authenticate],
+  );
+
+  const register = useCallback(
+    (payload: RegisterPayload) =>
+      authenticate(() => registerUser(payload), "Registration failed"),
+    [authenticate],
+  );
 
   const logout = useCallback(() => {
-    setUser(null);
-    localStorage.removeItem("authToken");
+    setState((prev) => ({ ...prev, user: null }));
+    tokenStorage.remove();
   }, []);
 
   const clearError = useCallback(() => {
-    setError(null);
+    setState((prev) => ({ ...prev, error: null }));
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        user,
-        isLoading,
-        error,
+        user: state.user,
+        isLoading: state.isLoading,
+        error: state.error,
         login,
         register,
         logout,
@@ -93,7 +115,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Hook to use auth context
 export function useAuth() {
   const context = React.useContext(AuthContext);
   if (context === undefined) {

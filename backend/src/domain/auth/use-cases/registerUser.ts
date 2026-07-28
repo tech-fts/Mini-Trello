@@ -9,13 +9,12 @@ export async function registerUser(
 ): Promise<User> {
   validateRegisterInput(input);
 
-  const normalizedEmail = input.email.trim().toLowerCase();
-  const existingUser = await userRepository.getByEmail(normalizedEmail);
+  const existingUser = await userRepository.getByEmail(input.email);
   if (existingUser) {
     throw new Error("Email is already registered");
   }
 
   const passwordHash = hashPassword(input.password);
 
-  return userRepository.create({ email: normalizedEmail, password: input.password }, passwordHash);
+  return userRepository.create(input, passwordHash);
 }

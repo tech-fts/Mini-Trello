@@ -9,8 +9,7 @@ export async function loginUser(
 ): Promise<User> {
   validateLoginInput(input);
 
-  const normalizedEmail = input.email.trim().toLowerCase();
-  const existingUser = await userRepository.getByEmail(normalizedEmail);
+  const existingUser = await userRepository.getByEmail(input.email);
   if (!existingUser) {
     throw new Error("Invalid credentials");
   }

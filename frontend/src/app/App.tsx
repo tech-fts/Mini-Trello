@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { AuthProvider, useAuth } from "../contexts/AuthContext";
 import { SocketProvider } from "../contexts/SocketContext";
 import { Header } from "../components/Common/Header";
@@ -12,13 +12,10 @@ type AuthView = "login" | "register";
 function AuthShell() {
   const [view, setView] = useState<AuthView>("login");
 
-  const switchToRegister = useCallback(() => setView("register"), []);
-  const switchToLogin = useCallback(() => setView("login"), []);
-
   return view === "login" ? (
-    <LoginPage onSwitchToRegister={switchToRegister} />
+    <LoginPage onSwitchToRegister={() => setView("register")} />
   ) : (
-    <RegisterPage onSwitchToLogin={switchToLogin} />
+    <RegisterPage onSwitchToLogin={() => setView("login")} />
   );
 }
 
@@ -35,12 +32,7 @@ function KanbanShell() {
 
 function AppContent() {
   const { user } = useAuth();
-
-  if (!user) {
-    return <AuthShell />;
-  }
-
-  return <KanbanShell />;
+  return user ? <KanbanShell /> : <AuthShell />;
 }
 
 export function App() {

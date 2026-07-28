@@ -6,6 +6,7 @@ const deleteBoard_1 = require("../../../domain/boards/use-cases/deleteBoard");
 const getBoardById_1 = require("../../../domain/boards/use-cases/getBoardById");
 const getBoards_1 = require("../../../domain/boards/use-cases/getBoards");
 const updateBoard_1 = require("../../../domain/boards/use-cases/updateBoard");
+const http_1 = require("../../../shared/utils/http");
 function createBoardController(boardRepository) {
     return {
         listBoards: async (_req, res) => {
@@ -14,12 +15,12 @@ function createBoardController(boardRepository) {
                 res.json(boards);
             }
             catch (error) {
-                sendError(res, error);
+                (0, http_1.sendError)(res, error);
             }
         },
         getBoard: async (req, res) => {
             try {
-                const id = sanitizeId(req.params.id);
+                const id = (0, http_1.sanitizeId)(req.params.id);
                 const board = await (0, getBoardById_1.getBoardById)(boardRepository, id);
                 if (!board) {
                     res.status(404).json({ error: "Board not found" });
@@ -28,7 +29,7 @@ function createBoardController(boardRepository) {
                 res.json(board);
             }
             catch (error) {
-                sendError(res, error);
+                (0, http_1.sendError)(res, error);
             }
         },
         createBoardHandler: async (req, res) => {
@@ -38,12 +39,12 @@ function createBoardController(boardRepository) {
                 res.status(201).json(board);
             }
             catch (error) {
-                sendError(res, error);
+                (0, http_1.sendError)(res, error);
             }
         },
         updateBoardHandler: async (req, res) => {
             try {
-                const id = sanitizeId(req.params.id);
+                const id = (0, http_1.sanitizeId)(req.params.id);
                 const input = parseUpdateBoardInput(req.body);
                 const board = await (0, updateBoard_1.updateBoard)(boardRepository, id, input);
                 if (!board) {
@@ -53,12 +54,12 @@ function createBoardController(boardRepository) {
                 res.json(board);
             }
             catch (error) {
-                sendError(res, error);
+                (0, http_1.sendError)(res, error);
             }
         },
         deleteBoardHandler: async (req, res) => {
             try {
-                const id = sanitizeId(req.params.id);
+                const id = (0, http_1.sanitizeId)(req.params.id);
                 const deleted = await (0, deleteBoard_1.deleteBoard)(boardRepository, id);
                 if (!deleted) {
                     res.status(404).json({ error: "Board not found" });
@@ -67,7 +68,7 @@ function createBoardController(boardRepository) {
                 res.status(204).send();
             }
             catch (error) {
-                sendError(res, error);
+                (0, http_1.sendError)(res, error);
             }
         },
     };
@@ -107,14 +108,4 @@ function parseUpdateBoardInput(body) {
         throw new Error("Description must be 500 characters or less");
     }
     return { title, description };
-}
-function sanitizeId(id) {
-    return id.replace(/[^a-zA-Z0-9-_]/g, "").slice(0, 100);
-}
-function sendError(res, error) {
-    if (error instanceof Error) {
-        res.status(400).json({ error: error.message });
-        return;
-    }
-    res.status(500).json({ error: "Unexpected error" });
 }

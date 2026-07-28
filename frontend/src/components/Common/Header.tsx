@@ -1,6 +1,10 @@
 import { useAuth } from "../../contexts/AuthContext";
 import UserAvatar from "./UserAvatar";
 
+/**
+ * App header bar. Only rendered when the user is authenticated (KanbanShell),
+ * so there is no "logged out" branch — the login/register pages have their own layout.
+ */
 export function Header() {
   const { user, logout } = useAuth();
 
@@ -12,18 +16,13 @@ export function Header() {
         </div>
 
         <div className="header-right">
-          {user ? (
+          {user && (
             <div className="user-section">
               <UserAvatar user={user} />
               <span className="user-email">{user.email}</span>
               <button className="logout-btn" onClick={logout}>
                 Logout
               </button>
-            </div>
-          ) : (
-            <div className="auth-section">
-              <button className="login-btn">Login</button>
-              <button className="register-btn">Register</button>
             </div>
           )}
         </div>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Card as CardType } from "../../types/index";
 import { Modal } from "../Common/Modal";
 import { FormField } from "../Common/FormField";
+import { ModalFooter } from "../Common/ModalFooter";
 
 interface CardModalProps {
   card: CardType;
@@ -51,14 +52,11 @@ export function CardModal({
         onChange={() => {}}
         disabled
       />
-      <div className="modal-footer">
-        <button className="btn-primary" onClick={handleSave}>
-          Save
-        </button>
-        <button className="btn-secondary" onClick={onClose}>
-          Cancel
-        </button>
-      </div>
+      <ModalFooter
+        primaryLabel="Save"
+        onPrimary={handleSave}
+        onCancel={onClose}
+      />
     </Modal>
   );
 }
