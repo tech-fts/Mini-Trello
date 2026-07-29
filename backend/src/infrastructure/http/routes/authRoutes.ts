@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { createAuthController } from "../controllers/authController";
-import { InMemoryUserRepository } from "../../persistence/inMemory/userRepository";
-import { UserRepository } from "../../../domain/auth/repositories/userRepository";
+import { getUserRepository } from "../../persistence/repositoryFactory";
 
-export function createAuthRouter(userRepository: UserRepository = new InMemoryUserRepository()) {
+export function createAuthRouter() {
   const router = Router();
-  const controller = createAuthController(userRepository);
+  const repository = getUserRepository();
+  const controller = createAuthController(repository);
 
   router.post("/register", controller.registerHandler);
   router.post("/login", controller.loginHandler);

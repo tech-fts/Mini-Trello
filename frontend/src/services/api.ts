@@ -11,56 +11,61 @@ import type {
   ApiResponse,
 } from "../types/index";
 
+/**
+ * All API paths use the /api prefix so they work through the Vite proxy
+ * in development AND against a direct backend URL in production.
+ */
+
 // ============ AUTH ENDPOINTS ============
 
 export function registerUser(
-  payload: RegisterPayload
+  payload: RegisterPayload,
 ): Promise<ApiResponse<AuthResponse>> {
-  return apiPost<AuthResponse>("/auth/register", payload);
+  return apiPost<AuthResponse>("/api/auth/register", payload);
 }
 
 export function loginUser(
-  payload: LoginPayload
+  payload: LoginPayload,
 ): Promise<ApiResponse<AuthResponse>> {
-  return apiPost<AuthResponse>("/auth/login", payload);
+  return apiPost<AuthResponse>("/api/auth/login", payload);
 }
 
 // ============ BOARD ENDPOINTS ============
 
 export function getBoards(): Promise<ApiResponse<Board[]>> {
-  return apiGet<Board[]>("/boards");
+  return apiGet<Board[]>("/api/boards");
 }
 
 export function createBoard(
-  payload: CreateBoardPayload
+  payload: CreateBoardPayload,
 ): Promise<ApiResponse<Board>> {
-  return apiPost<Board>("/boards", payload);
+  return apiPost<Board>("/api/boards", payload);
 }
 
 export function getBoardById(id: string): Promise<ApiResponse<Board>> {
-  return apiGet<Board>(`/boards/${id}`);
+  return apiGet<Board>(`/api/boards/${id}`);
 }
 
 export function updateBoard(
   id: string,
-  payload: UpdateBoardPayload
+  payload: UpdateBoardPayload,
 ): Promise<ApiResponse<Board>> {
-  return apiPut<Board>(`/boards/${id}`, payload);
+  return apiPut<Board>(`/api/boards/${id}`, payload);
 }
 
 export function deleteBoard(id: string): Promise<ApiResponse<void>> {
-  return apiDelete<void>(`/boards/${id}`);
+  return apiDelete<void>(`/api/boards/${id}`);
 }
 
 // ============ CARD ENDPOINTS ============
 
 export function getCardById(id: string): Promise<ApiResponse<Card>> {
-  return apiGet<Card>(`/cards/${id}`);
+  return apiGet<Card>(`/api/cards/${id}`);
 }
 
 export function updateCardPosition(
   id: string,
-  payload: UpdateCardPositionPayload
+  payload: UpdateCardPositionPayload,
 ): Promise<ApiResponse<Card>> {
-  return apiPut<Card>(`/cards/${id}/position`, payload);
+  return apiPut<Card>(`/api/cards/${id}/position`, payload);
 }

@@ -3,6 +3,8 @@ import { useKanban } from "../../hooks/useKanban";
 import { BoardList } from "./BoardList";
 import { SelectedBoard } from "./SelectedBoard";
 import { CreateBoardModal } from "./CreateBoardModal";
+import { EmptyState } from "../Common/EmptyState";
+import { PlusIcon } from "../Common/Icons";
 
 export function Board() {
   const { selectedBoard, boards, loadBoard, addBoard, removeBoard } =
@@ -19,7 +21,13 @@ export function Board() {
     <div className="board-container">
       <div className="board-header">
         <h1>My Boards</h1>
-        <button onClick={() => setShowCreateModal(true)}>+ New Board</button>
+        <button
+          className="btn btn-primary"
+          onClick={() => setShowCreateModal(true)}
+        >
+          <PlusIcon size={18} />
+          New Board
+        </button>
       </div>
 
       <BoardList
@@ -27,6 +35,23 @@ export function Board() {
         onOpen={loadBoard}
         onDelete={handleDeleteBoard}
       />
+
+      {boards.length === 0 && (
+        <EmptyState
+          icon="📋"
+          title="No boards yet"
+          description="Create your first board to start organizing tasks."
+          action={
+            <button
+              className="btn btn-primary"
+              onClick={() => setShowCreateModal(true)}
+            >
+              <PlusIcon size={18} />
+              Create Board
+            </button>
+          }
+        />
+      )}
 
       <CreateBoardModal
         isOpen={showCreateModal}

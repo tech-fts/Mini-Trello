@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { createBoardController } from "../controllers/boardController";
-import { PrismaBoardRepository } from "../../persistence/postgres/boardRepository";
-import { BoardRepository } from "../../../domain/boards/repositories/boardRepository";
+import { getBoardRepository } from "../../persistence/repositoryFactory";
 
-export function createBoardRouter(boardRepository: BoardRepository = new PrismaBoardRepository()) {
+export function createBoardRouter() {
   const router = Router();
-  const controller = createBoardController(boardRepository);
+  const repository = getBoardRepository();
+  const controller = createBoardController(repository);
 
   router.get("/", controller.listBoards);
   router.post("/", controller.createBoardHandler);

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import http from "http";
 import express, { Express } from "express";
 import cors from "cors";
@@ -10,8 +11,6 @@ export function createApp(): Express {
 
   app.disable("x-powered-by");
 
-  // Permit cross-origin requests from the Vite dev server (port 5000 / 5173)
-  // and any other frontend origin. Restrict in production via allowOrigin option.
   app.use(cors({ origin: true, credentials: true }));
   app.use(express.json({ limit: "1mb" }));
   app.use((req, res, next) => {

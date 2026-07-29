@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useKanban } from "../../hooks/useKanban";
 import CardComponent from "./Card";
+import { EmptyState } from "../Common/EmptyState";
 
 interface ColumnProps {
   columnId: string;
   title: string;
 }
 
-/** Default column definitions — can be moved to config/constants later (OCP). */
+/** Default column definitions — single source of truth (DRY). */
 export const COLUMNS = [
   { id: "todo", title: "To Do" },
   { id: "in-progress", title: "In Progress" },
@@ -53,15 +54,24 @@ export function Column({ columnId, title }: ColumnProps) {
         <h3>{title}</h3>
         <span className="card-count">{columnCards.length}</span>
       </div>
-      <div className="cards-list">
-        {columnCards.map((card) => (
-          <CardComponent
-            key={card.id}
-            card={card}
-            onDragStart={handleDragStart}
-          />
-        ))}
-      </div>
+
+      {columnCards.length > 0 ? (
+        <div className="cards-list">
+          {columnCards.map((card) => (
+            <CardComponent
+              key={card.id}
+              card={card}
+              onDragStart={handleDragStart}
+            />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          icon="📌"
+          title="No cards"
+          description="Drag cards here or create a new one."
+        />
+      )}
     </div>
   );
 }

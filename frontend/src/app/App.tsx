@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AuthProvider, useAuth } from "../contexts/AuthContext";
 import { SocketProvider } from "../contexts/SocketContext";
+import { ThemeProvider } from "../contexts/ThemeContext";
 import { Header } from "../components/Common/Header";
 import { Board } from "../components/Kanban/Board";
 import { LoginPage } from "../components/Auth/LoginPage";
@@ -37,11 +38,13 @@ function AppContent() {
 
 export function App() {
   return (
-    <AuthProvider>
-      <SocketProvider>
-        <AppContent />
-      </SocketProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <SocketProvider>
+          <AppContent />
+        </SocketProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

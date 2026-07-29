@@ -6,7 +6,7 @@ import { getBoards } from "../../../domain/boards/use-cases/getBoards";
 import { updateBoard } from "../../../domain/boards/use-cases/updateBoard";
 import { BoardRepository } from "../../../domain/boards/repositories/boardRepository";
 import { CreateBoardInput, UpdateBoardInput } from "../../../domain/boards/entities/board";
-import { sanitizeId, sendError } from "../../../shared/utils/http";
+import { sanitizeId, sendError, DomainError } from "../../../shared/utils/http";
 
 export function createBoardController(boardRepository: BoardRepository) {
   return {
@@ -80,9 +80,10 @@ export function createBoardController(boardRepository: BoardRepository) {
   };
 }
 
+/** DRY: validation lives only in the controller — the use-case trusts its caller. */
 function parseCreateBoardInput(body: unknown): CreateBoardInput {
   if (!body || typeof body !== "object") {
-    throw new Error("Request body must be an object");
+    throw new DomainError("Request body must be an object");
   }
 
   const data = body as Record<string, unknown>;
@@ -90,15 +91,15 @@ function parseCreateBoardInput(body: unknown): CreateBoardInput {
   const description = typeof data.description === "string" ? data.description.trim() : undefined;
 
   if (!title) {
-    throw new Error("Title is required");
+    throw new DomainError("Title is required");
   }
 
   if (title.length > 100) {
-    throw new Error("Title must be 100 characters or less");
+    throw new DomainError("Title must be 100 characters or less");
   }
 
   if (description && description.length > 500) {
-    throw new Error("Description must be 500 characters or less");
+    throw new DomainError("Description must be 500 characters or less");
   }
 
   return { title, description };
@@ -106,7 +107,7 @@ function parseCreateBoardInput(body: unknown): CreateBoardInput {
 
 function parseUpdateBoardInput(body: unknown): UpdateBoardInput {
   if (!body || typeof body !== "object") {
-    throw new Error("Request body must be an object");
+    throw new DomainError("Request body must be an object");
   }
 
   const data = body as Record<string, unknown>;
@@ -114,17 +115,16 @@ function parseUpdateBoardInput(body: unknown): UpdateBoardInput {
   const description = typeof data.description === "string" ? data.description.trim() : undefined;
 
   if (title !== undefined && !title) {
-    throw new Error("Title cannot be empty");
+    throw new DomainError("Title cannot be empty");
   }
 
   if (title && title.length > 100) {
-    throw new Error("Title must be 100 characters or less");
+    throw new DomainError("Title must be 100 characters or less");
   }
 
   if (description && description.length > 500) {
-    throw new Error("Description must be 500 characters or less");
+    throw new DomainError("Description must be 500 characters or less");
   }
 
   return { title, description };
 }
-
