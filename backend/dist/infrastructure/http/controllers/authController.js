@@ -6,7 +6,6 @@ const loginUser_1 = require("../../../domain/auth/use-cases/loginUser");
 const http_1 = require("../../../shared/utils/http");
 /**
  * Formats a domain User into the AuthResponse shape the frontend expects.
- *
  * DRY: single place — both registerHandler and loginHandler use this.
  */
 function formatAuthResponse(user) {
@@ -36,24 +35,18 @@ function createAuthController(userRepository) {
         },
     };
 }
-/**
- * Parses and normalizes auth request bodies.
- *
- * SRP: this function owns input parsing/sanitization for auth endpoints.
- * The domain use-cases receive already-normalized input and don't re-normalize.
- */
 function parseAuthInput(body) {
     if (!body || typeof body !== "object") {
-        throw new Error("Request body must be an object");
+        throw new http_1.DomainError("Request body must be an object");
     }
     const data = body;
     const email = typeof data.email === "string" ? data.email.trim().toLowerCase() : "";
     const password = typeof data.password === "string" ? data.password : "";
     if (!email) {
-        throw new Error("Email is required");
+        throw new http_1.DomainError("Email is required");
     }
     if (!password) {
-        throw new Error("Password is required");
+        throw new http_1.DomainError("Password is required");
     }
     return { email, password };
 }

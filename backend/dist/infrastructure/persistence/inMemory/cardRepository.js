@@ -16,6 +16,31 @@ class InMemoryCardRepository {
             .filter((card) => card.boardId === boardId)
             .sort((a, b) => a.position - b.position);
     }
+    async create(input) {
+        const card = {
+            id: crypto.randomUUID(),
+            boardId: input.boardId,
+            columnId: input.columnId,
+            title: input.title,
+            description: input.description,
+            position: input.position,
+            createdAt: new Date().toISOString(),
+        };
+        this.cards.push(card);
+        return card;
+    }
+    async update(id, input) {
+        const index = this.cards.findIndex((card) => card.id === id);
+        if (index === -1)
+            return null;
+        this.cards[index] = { ...this.cards[index], ...input };
+        return this.cards[index];
+    }
+    async delete(id) {
+        const initialLength = this.cards.length;
+        this.cards = this.cards.filter((card) => card.id !== id);
+        return this.cards.length < initialLength;
+    }
     async updatePosition(id, input) {
         const index = this.cards.findIndex((card) => card.id === id);
         if (index === -1) {

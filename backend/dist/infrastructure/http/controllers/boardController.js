@@ -73,39 +73,40 @@ function createBoardController(boardRepository) {
         },
     };
 }
+/** DRY: validation lives only in the controller — the use-case trusts its caller. */
 function parseCreateBoardInput(body) {
     if (!body || typeof body !== "object") {
-        throw new Error("Request body must be an object");
+        throw new http_1.DomainError("Request body must be an object");
     }
     const data = body;
     const title = typeof data.title === "string" ? data.title.trim() : "";
     const description = typeof data.description === "string" ? data.description.trim() : undefined;
     if (!title) {
-        throw new Error("Title is required");
+        throw new http_1.DomainError("Title is required");
     }
     if (title.length > 100) {
-        throw new Error("Title must be 100 characters or less");
+        throw new http_1.DomainError("Title must be 100 characters or less");
     }
     if (description && description.length > 500) {
-        throw new Error("Description must be 500 characters or less");
+        throw new http_1.DomainError("Description must be 500 characters or less");
     }
     return { title, description };
 }
 function parseUpdateBoardInput(body) {
     if (!body || typeof body !== "object") {
-        throw new Error("Request body must be an object");
+        throw new http_1.DomainError("Request body must be an object");
     }
     const data = body;
     const title = typeof data.title === "string" ? data.title.trim() : undefined;
     const description = typeof data.description === "string" ? data.description.trim() : undefined;
     if (title !== undefined && !title) {
-        throw new Error("Title cannot be empty");
+        throw new http_1.DomainError("Title cannot be empty");
     }
     if (title && title.length > 100) {
-        throw new Error("Title must be 100 characters or less");
+        throw new http_1.DomainError("Title must be 100 characters or less");
     }
     if (description && description.length > 500) {
-        throw new Error("Description must be 500 characters or less");
+        throw new http_1.DomainError("Description must be 500 characters or less");
     }
     return { title, description };
 }
