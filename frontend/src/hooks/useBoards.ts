@@ -20,7 +20,7 @@ interface UseBoardsState {
  * Hook responsible ONLY for board CRUD.
  * Single Responsibility: boards state + board API calls.
  */
-export function useBoards() {
+export function useBoards(onBoardLoaded?: (boardId: string) => void) {
   const [state, setState] = useState<UseBoardsState>({
     boards: [],
     selectedBoard: null,
@@ -41,8 +41,11 @@ export function useBoards() {
       onSuccess: (res) => ({
         selectedBoard: (res.data ?? null) as Board | null,
       }),
+    }).then(() => {
+      // After board loads, trigger card loading
+      onBoardLoaded?.(boardId);
     });
-  }, []);
+  }, [onBoardLoaded]);
 
   const addBoard = useCallback(
     (title: string, description?: string) => {

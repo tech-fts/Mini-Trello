@@ -11,8 +11,8 @@ import { useCards } from "./useCards";
  * New components can import useBoards() or useCards() directly for finer granularity.
  */
 export function useKanban() {
-  const boards = useBoards();
   const cards = useCards();
+  const boards = useBoards(cards.loadCards);
 
   return {
     boards: boards.boards,
@@ -26,6 +26,10 @@ export function useKanban() {
     modifyBoard: boards.modifyBoard,
     removeBoard: boards.removeBoard,
     getCard: cards.getCard,
+    addCard: cards.addCard,
+    modifyCard: cards.modifyCard,
+    removeCard: cards.removeCard,
     moveCard: cards.moveCard,
+    setBoardCards: cards.setBoardCards,
   };
 }

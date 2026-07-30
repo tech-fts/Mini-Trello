@@ -4,6 +4,8 @@ import type {
   RegisterPayload,
   CreateBoardPayload,
   UpdateBoardPayload,
+  CreateCardPayload,
+  UpdateCardPayload,
   UpdateCardPositionPayload,
   Board,
   Card,
@@ -59,8 +61,29 @@ export function deleteBoard(id: string): Promise<ApiResponse<void>> {
 
 // ============ CARD ENDPOINTS ============
 
+export function getCardsByBoard(boardId: string): Promise<ApiResponse<Card[]>> {
+  return apiGet<Card[]>(`/api/cards?boardId=${encodeURIComponent(boardId)}`);
+}
+
 export function getCardById(id: string): Promise<ApiResponse<Card>> {
   return apiGet<Card>(`/api/cards/${id}`);
+}
+
+export function createCard(
+  payload: CreateCardPayload,
+): Promise<ApiResponse<Card>> {
+  return apiPost<Card>("/api/cards", payload);
+}
+
+export function updateCard(
+  id: string,
+  payload: UpdateCardPayload,
+): Promise<ApiResponse<Card>> {
+  return apiPut<Card>(`/api/cards/${id}`, payload);
+}
+
+export function deleteCard(id: string): Promise<ApiResponse<void>> {
+  return apiDelete<void>(`/api/cards/${id}`);
 }
 
 export function updateCardPosition(

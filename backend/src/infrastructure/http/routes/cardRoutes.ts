@@ -1,13 +1,17 @@
 import { Router } from "express";
 import { createCardController } from "../controllers/cardController";
-import { InMemoryCardRepository } from "../../persistence/inMemory/cardRepository";
-import { CardRepository } from "../../../domain/cards/repositories/cardRepository";
+import { getCardRepository } from "../../persistence/repositoryFactory";
 
-export function createCardRouter(cardRepository: CardRepository = new InMemoryCardRepository()) {
+export function createCardRouter() {
   const router = Router();
-  const controller = createCardController(cardRepository);
+  const repository = getCardRepository();
+  const controller = createCardController(repository);
 
+  router.get("/", controller.listCards);
+  router.post("/", controller.createCardHandler);
   router.get("/:id", controller.getCard);
+  router.put("/:id", controller.updateCardHandler);
+  router.delete("/:id", controller.deleteCardHandler);
   router.put("/:id/position", controller.updateCardPositionHandler);
 
   return router;

@@ -1,5 +1,6 @@
 import { Board, UpdateBoardInput } from "../entities/board";
 import { BoardRepository } from "../repositories/boardRepository";
+import { DomainError } from "../../../shared/utils/http";
 
 export async function updateBoard(
   boardRepository: BoardRepository,
@@ -7,7 +8,7 @@ export async function updateBoard(
   input: UpdateBoardInput,
 ): Promise<Board | null> {
   if (input.title !== undefined && !input.title.trim()) {
-    throw new Error("Title cannot be empty");
+    throw new DomainError("Title cannot be empty");
   }
 
   return boardRepository.update(id, input);

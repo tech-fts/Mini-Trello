@@ -1,4 +1,4 @@
-import { Card, UpdateCardPositionInput } from "../../../domain/cards/entities/card";
+import { Card, CreateCardInput, UpdateCardPositionInput } from "../../../domain/cards/entities/card";
 import { CardRepository } from "../../../domain/cards/repositories/cardRepository";
 
 export class InMemoryCardRepository implements CardRepository {
@@ -16,6 +16,36 @@ export class InMemoryCardRepository implements CardRepository {
     return this.cards
       .filter((card) => card.boardId === boardId)
       .sort((a, b) => a.position - b.position);
+  }
+
+  async create(input: CreateCardInput): Promise<Card> {
+    const card: Card = {
+      id: crypto.randomUUID(),
+      boardId: input.boardId,
+      columnId: input.columnId,
+      title: input.title,
+      description: input.description,
+      position: input.position,
+      createdAt: new Date().toISOString(),
+    };
+    this.cards.push(card);
+    return card;
+  }
+
+  async update(
+    id: string,
+    input: { title?: string; description?: string },
+  ): Promise<Card | null> {
+    const index = this.cards.findIndex((card) => card.id === id);
+    if (index === -1) return null;
+    this.cards[index] = { ...this.cards[index], ...input };
+    return this.cards[index];
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const initialLength = this.cards.length;
+    this.cards = this.cards.filter((card) => card.id !== id);
+    return this.cards.length < initialLength;
   }
 
   async updatePosition(

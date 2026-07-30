@@ -55,6 +55,19 @@ export interface UpdateCardPositionPayload {
   columnId?: string;
 }
 
+export interface CreateCardPayload {
+  boardId: string;
+  columnId: string;
+  title: string;
+  description?: string;
+  position?: number;
+}
+
+export interface UpdateCardPayload {
+  title?: string;
+  description?: string;
+}
+
 // API Response types
 export interface ApiError {
   message: string;
